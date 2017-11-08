@@ -1,7 +1,30 @@
 http://www.informit.com/articles/article.aspx?p=2756471&seqNum=4
 
+
+
+Stored File : 
+    HBaseStorageHandler data are stored in hbase
+    
+    Text file—All data are stored as raw text using the Unicode standard.
+
+    Sequence file—The data are stored as binary key/value pairs.
+
+    RCFile—All data are stored in a column optimized format (instead of row optimized).
+
+    ORC—An optimized row columnar format that can significantly improve Hive performance.
+
+    Parquet—A columnar format that provides portability to other Hadoop tools including Hive, Drill, Impala, Crunch, and Pig.
+    
+
+
 hdfs dfs -mkdir /home/examplecsv/
 hdfs dfs -put examplecsv.csv /home/examplecsv/
+
+
+CREATE TABLE hbase_z_test1(key int, name string,address string,hp string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,data:name,data:address,data:hp")
+TBLPROPERTIES ("hbase.table.name" = "z_test1", "hbase.mapred.output.outputtable" = "z_test1");
 
 
 CREATE EXTERNAL TABLE IF NOT EXISTS csvexample(
