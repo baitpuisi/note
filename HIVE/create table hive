@@ -1,0 +1,34 @@
+==============================load hbase to hive
+CREATE EXTERNAL TABLE dosm_my_ecommerce_live(key string, id string, link_ori string, post_date bigint, price_actual double, price_ori double, source string, timestamp_loc bigint, title string, w_date string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,detail:id,detail:link_ori,detail:post_date#b,detail:price_actual#b,detail:price_ori#b,detail:source,detail:timestamp#b,detail:title,detail:w_date")
+TBLPROPERTIES ("hbase.table.name" = "dosm_my_ecommerce_live", "hbase.mapred.output.outputtable" = "dosm_my_ecommerce_live" );
+
+
+======================== orc compressed
+CREATE EXTERNAL TABLE dosm(key string, id string, link_ori string, post_date bigint, price_actual double, price_ori double, source string, timestamp_loc bigint, title string, w_date string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,detail:id,detail:link_ori,detail:post_date#b,detail:price_actual#b,detail:price_ori#b,detail:source,detail:timestamp#b,detail:title,detail:w_date")
+TBLPROPERTIES ("hbase.table.name" = "dosm", "hbase.mapred.output.outputtable" = "dosm", "orc.compress"="SNAPPY" );
+
+
+======================= create table phoenix
+create view if not exists "oz" (pk VARCHAR PRIMARY KEY, "detail"."id" VARCHAR, "detail"."link_ori" VARCHAR, "detail"."post_date" UNSIGNED_LONG, "detail"."price_ori" UNSIGNED_DOUBLE, "detail"."price_actual" UNSIGNED_DOUBLE, "detail"."source" VARCHAR, "detail"."timestamp" UNSIGNED_LONG, "detail"."title" VARCHAR) compression=snappy;
+
+======================= create table java phoneix
+create view if not exists "+'"'+"dosm_lazada"+'"'+" (pk VARCHAR PRIMARY KEY, "+'"'+"detail"+'"'+"."+'"'+"id"+'"'+" VARCHAR, "+'"'+"detail"+'"'+"."+'"'+"link_ori"+'"'+" VARCHAR, "+'"'+"detail"+'"'+"."+'"'+"post_date"+'"'+" UNSIGNED_LONG, "+'"'+"detail"+'"'+"."+'"'+"price_ori"+'"'+" UNSIGNED_DOUBLE, "+'"'+"detail"+'"'+"."+'"'+"price_actual"+'"'+" UNSIGNED_DOUBLE, "+'"'+"detail"+'"'+"."+'"'+"source"+'"'+" VARCHAR, "+'"'+"detail"+'"'+"."+'"'+"timestamp"+'"'+" UNSIGNED_LONG, "+'"'+"detail"+'"'+"."+'"'+"title"+'"'+" VARCHAR, "+'"'+"detail"+'"'+"."+'"'+"w_date"+'"'+" VARCHAR) compression=snappy;
+
+
+create view if not exists "dosm_ecommerce_group_1" (pk VARCHAR PRIMARY KEY, "detail"."id" VARCHAR, "detail"."link_ori" VARCHAR, "detail"."post_date" UNSIGNED_LONG, detail"."source" VARCHAR, "detail"."timestamp" UNSIGNED_LONG, "detail"."title" VARCHAR, "detail"."detail"."price_actual-20170517" UNSIGNED_DOUBLE, "detail"."price_actual-20170518" UNSIGNED_DOUBLE, "detail"."price_ori-20170517" UNSIGNED_DOUBLE, "detail"."price_ori-20170518" UNSIGNED_DOUBLE) compression=snappy
+
+================================TEST IMPALA==================================
+create 'z-network', 
+{ NAME => 'MS', REPLICATION_SCOPE => '1',COMPRESSION => 'SNAPPY' },
+{ NAME => 'MG', REPLICATION_SCOPE => '1',COMPRESSION => 'SNAPPY' } ,
+{ NAME => 'FL', REPLICATION_SCOPE => '1',COMPRESSION => 'SNAPPY' } ,
+{ NAME => 'ACT', REPLICATION_SCOPE => '1',COMPRESSION => 'SNAPPY' } 
+
+CREATE EXTERNAL TABLE z_network(key string, medsos map<string, string>, messenger map<string, string> ,edges map<string, string>,act map<string, string>)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,MS:,MG:,FL:,ACT:")
+TBLPROPERTIES ("hbase.table.name" = "z-network", "hbase.mapred.output.outputtable" = "z-network");

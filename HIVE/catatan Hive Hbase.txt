@@ -1,0 +1,38 @@
+CREATE TABLE hbase_z_test1(key int, name string,address string,hp string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,data:name,data:address,data:hp")
+TBLPROPERTIES ("hbase.table.name" = "z_test1", "hbase.mapred.output.outputtable" = "z_test1");
+
+
+insert into hbase_z_test1(key,name,address,hp) values
+(26,'isabela','ciamis','21231231')
+
+CREATE EXTERNAL TABLE table_z(key int, name string,address string,hp string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,data:name,data:address,data:hp")
+TBLPROPERTIES ("hbase.table.name" = "z_test1", "hbase.mapred.output.outputtable" = "z_test1" );
+
+====================================================================================================
+profiling-graph
+LOAD DATA HBASE TO HIVE 
+
+CREATE EXTERNAL TABLE profiling_graph(key string, id_person string,name string,parent_id string,username string,source string,image string,data string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,graph:id_person, graph:name, graph:parent_id, graph:username, graph:source, graph:image,row:data")
+TBLPROPERTIES ("hbase.table.name" = "profiling-graph", "hbase.mapred.output.outputtable" = "profiling-graph");
+
+CREATE EXTERNAL TABLE profiling_network(key string,target_out string) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,FL:out")
+TBLPROPERTIES ("hbase.table.name" = "profiling-network", "hbase.mapred.output.outputtable" = "profiling-network");
+
+
+CREATE EXTERNAL TABLE profiling_network(key string, medsos map<string, string>, messenger map<string, string> ,edges map<string, string>,act map<string, string>)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,MS:,MG:,FL:,ACT:")
+TBLPROPERTIES ("hbase.table.name" = "profiling-network", "hbase.mapred.output.outputtable" = "profiling-network");
+
+hbase122 table = profiling-network
+solr125 collection = http://192.168.20.125:8983/solr/#/profiling-network-1
+hive123 table = profiling_network
+

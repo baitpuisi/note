@@ -1,0 +1,104 @@
+http://www.informit.com/articles/article.aspx?p=2756471&seqNum=4
+
+hdfs dfs -mkdir /home/examplecsv/
+hdfs dfs -put examplecsv.csv /home/examplecsv/
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS csvexample(
+     id INT,title STRING, name STRING,one STRING, two STRING,three STRING, four STRING,location STRING,category STRING, point STRING)
+     COMMENT 'FAKTUR MOVIE'
+     ROW FORMAT DELIMITED
+     FIELDS TERMINATED BY ','
+     STORED AS TEXTFILE
+     LOCATION '/home/examplecsv/';
+
+================================================================================
+
+
+ CREATE TABLE IF NOT EXISTS employeText(
+     EmployeeID INT,FirstName STRING, Title STRING)
+     COMMENT 'Employee Names'
+     ROW FORMAT DELIMITED
+     FIELDS TERMINATED BY ','
+     STORED AS TEXTFILE
+     LOCATION '/home/examplecsv/text/';
+
+
+ CREATE TABLE IF NOT EXISTS employeSq(
+     EmployeeID INT,FirstName STRING, Title STRING)
+     COMMENT 'Employee Names'
+     STORED AS SEQUENCEFILE
+     LOCATION '/home/examplecsv/SEQUENCE/';
+
+
+ CREATE TABLE IF NOT EXISTS employeRC(
+     EmployeeID INT,FirstName STRING, Title STRING)
+     COMMENT 'Employee Names'
+     STORED AS RCFILE
+     LOCATION '/home/examplecsv/RCFile/';
+
+
+ CREATE TABLE IF NOT EXISTS employePar(
+     EmployeeID INT,FirstName STRING, Title STRING)
+     COMMENT 'Employee Names'
+     STORED AS PARQUET
+     LOCATION '/home/examplecsv/Parquet/';
+
+ CREATE TABLE IF NOT EXISTS employeORC(
+     EmployeeID INT,FirstName STRING, Title STRING)
+     COMMENT 'Employee ORC'
+     STORED AS ORC
+     LOCATION '/home/examplecsv/ORC/';
+
+
+
+insert into employeText(EmployeeID,FirstName, Title) values
+(1,'Dia isabela','terserah');
+
+
+INSERT INTO TABLE employeORC
+  VALUES (1,'Dia isabela','terserah'), (2,'Adalah Kisah','Bebas');
+
+INSERT INTO TABLE employePar
+  VALUES (1,'Dia isabela','terserah'), (2,'Adalah Kisah','Bebas');
+
+INSERT INTO TABLE employeRC
+  VALUES (1,'Dia isabela','terserah'), (2,'Adalah Kisah','Bebas');
+
+INSERT INTO TABLE employeSq
+  VALUES (1,'Dia isabela','terserah'), (2,'Adalah Kisah','Bebas');
+
+
+
+hdfs dfs -mkdir /home/examplecsv/ORC/
+hdfs dfs -mkdir /home/examplecsv/Parquet/
+hdfs dfs -mkdir /home/examplecsv/RCFile/
+hdfs dfs -mkdir /home/examplecsv/SEQUENCE/
+hdfs dfs -mkdir /home/examplecsv/text/
+
+
+hdfs dfs -get /home/examplecsv /opt
+hdfs dfs -get /home/examplecsv hdfs://cluster04/apps/hive/warehouse/kafka_monitor /home/hivedump/
+
+
+
+hadoop fs -copyToLocal /home/examplecsv/*  root:/home/hivedump/
+
+hadoop fs -copyToLocal /home/examplecsv/Parquet/  /home/hivedump/
+hadoop fs -copyToLocal /home/examplecsv/RCFile/  /home/hivedump/
+hadoop fs -copyToLocal /home/examplecsv/SEQUENCE/  /home/hivedump/
+hadoop fs -copyToLocal /home/examplecsv/text/*  /home/hivedump/
+
+
+//show locate hive data stored
+
+DESCRIBE FORMATTED employeorc;
+DESCRIBE FORMATTED kafka_monitor;
+
+
+
+"Dixon My First Ticonderoga Pencil, #2",Alan Hwang,52645,-8.37,5.85,2.27,Ontario,Pens & Art Supplies,0.56
+"Hon Metal Bookcases, Putty",Darren Budd,52162,-220.3,6.48,9.68,Ontario,Bookcases,0.56
+
+
+hdfs dfs -mkdir example
