@@ -1,5 +1,0 @@
-sok
-
-halooo
-
-OKEEEEEEEEEEEEEEEEEEE
